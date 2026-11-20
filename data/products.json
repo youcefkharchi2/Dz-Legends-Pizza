@@ -3,7 +3,7 @@
     "cost": 0,
     "available": false,
     "description": "",
-    "minStock": 0,
+    "minStock": 7,
     "stock": 7,
     "name": "pizza viande",
     "category": "Pizzas",
