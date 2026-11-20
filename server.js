@@ -65,10 +65,10 @@ async function githubGet(filePath) {
     }
     return null;
   }
-  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}`;
+  const url = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO + "/contents/" + filePath + "?ref=" + GITHUB_BRANCH;
   const response = await fetch(url, { headers: githubHeaders() });
   if (response.status === 404) return null;
-  if (!response.ok) throw new Error(`GitHub GET failed: ${response.status} ${response.statusText}`);
+  if (!response.ok) throw new Error("GitHub GET failed: " + response.status);
   const payload = await response.json();
   const content = Buffer.from(payload.content, "base64").toString("utf8");
   return JSON.parse(content);
