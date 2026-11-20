@@ -77,7 +77,7 @@ async function githubGet(filePath) {
   if (!response.ok) {
     const errorBody = await response.text();
     console.error("GitHub GET error:", response.status, errorBody);
-    throw new Error("GitHub GET failed: " + response.status + " - " + errorBody);
+    if (response.status === 403 || response.status === 429) { const fs = require("fs"); const localPath = path.join(__dirname, filePath); if (fs.existsSync(localPath)) { console.log("Using local fallback for " + filePath); return JSON.parse(fs.readFileSync(localPath, "utf8")); } }
   }
   const payload = await response.json();
   const content = Buffer.from(payload.content, "base64").toString("utf8");
