@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-18T08:15:28.971Z",
+  "checks": [
+    "Chromium and Firefox share saved products, orders, inventory and actual uploaded images",
+    "Seven-day chart represents a real negative profit with exact tooltip and highlighted today",
+    "A Chromium expense updates the Firefox dashboard without manual reloading",
+    "Background synchronization updates values without changing the selected page",
+    "Inventory with a fractional weighted cost can be edited successfully",
+    "Firefox theme persistence works and the tested workflows produce no JavaScript errors"
+  ],
+  "errors": []
+}

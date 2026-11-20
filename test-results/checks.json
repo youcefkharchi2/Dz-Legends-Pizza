@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-18T08:15:07.867Z",
+  "checks": [
+    "Fresh application has no demo data and exactly seven zero-profit bars",
+    "Dark and light themes change instantly and survive reload",
+    "All ten pages open and background synchronization never changes navigation",
+    "Mobile layout and collapsible navigation are usable without horizontal overflow",
+    "Initial owner setup and secure authenticated session work without public credentials",
+    "Administrator login works in a second isolated browser context",
+    "Product creation, category assignment, PC image upload, sizes, extras and recipe editor work",
+    "Product images are perfectly circular in POS and shared across independent browser contexts",
+    "POS checkout computes quantities, extras, discount, cost, change and recipe stock deduction correctly",
+    "Concurrent duplicate checkout requests never duplicate sales or stock movements",
+    "80 mm printable receipt includes receipt ID, cashier, items, totals and payment",
+    "Business expenses reduce net profit while inventory purchases are not double-counted",
+    "Insufficient-stock checkout rolls back entirely and never creates negative stock",
+    "Order preparation, completion and refund update revenue and restore stock exactly once",
+    "Stale updates are rejected instead of overwriting another browser’s changes",
+    "Expense editing and deletion recalculate actual profit",
+    "Stock entries, consumption, movement history and weighted purchase costs work",
+    "Category renaming and deletion preserve historical sale categories",
+    "Individual product deletion works without changing historical orders",
+    "Cashier menu, action permissions and financial cost masking are enforced by the backend",
+    "Deactivating an employee immediately revokes their sessions",
+    "58 mm receipt format and establishment settings are persisted",
+    "Real-data reports render and CSV/browser PDF export paths are available",
+    "Complete backups contain images and hashes, automatic backups exist, malformed restores are blocked",
+    "Strongly confirmed factory reset clears business data and chart while preserving the owner",
+    "Full restore reinstates products, images, orders, stock, financial data and settings",
+    "No JavaScript errors occurred during the tested workflows"
+  ],
+  "errors": []
+}
