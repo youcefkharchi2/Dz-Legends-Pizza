@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "id": "110f54c9-1c69-4dad-ab9c-e87bf8ed9cf1",
+    "date": "2026-11-20T20:32:33.066Z",
+    "items": [
+      {
+        "id": "d58eaf82-dde3-4bac-b2ea-bbd4ac734a57",
+        "name": "Pizza scalob",
+        "price": 350,
+        "cost": 0,
+        "qty": 1
+      }
+    ],
+    "total": 350,
+    "status": "Actif",
+    "payment": "رسم خريطة",
+    "received": 350,
+    "change": 0,
+    "stockApplied": true
+  }
+]
