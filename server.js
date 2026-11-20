@@ -1,5 +1,4 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
@@ -9,7 +8,10 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
-const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_OWNER = process.env.GITHUB_OWNER || "youcefkharchi2";
+const GITHUB_REPO = process.env.GITHUB_REPO || "Dz-Legends-Pizza";
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const APP_ORIGIN = process.env.APP_ORIGIN || "*";
 
 app.set("trust proxy", 1);
@@ -22,37 +24,78 @@ app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false });
 app.use("/api", apiLimiter);
 
-const stateSchema = new mongoose.Schema({
-  key: { type: String, required: true, unique: true, default: "application" },
-  data: { type: mongoose.Schema.Types.Mixed, required: true },
-  updatedAt: { type: Date, default: Date.now }
-}, { timestamps: true });
+const DATA_FILES = {
+  products: "data/products.json",
+  categories: "data/categories.json",
+  orders: "data/orders.json",
+  expenses: "data/expenses.json",
+  stock: "data/stock.json",
+  employees: "data/employees.json",
+  settings: "data/settings.json"
+};
 
-const State = mongoose.models.State || mongoose.model("State", stateSchema);
-
-const defaultState = () => ({
-  version: 4,
-  theme: "dark",
-  products: [],
-  categories: [],
-  orders: [],
-  expenses: [],
-  stockMovements: [],
-  employees: [],
-  settings: { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "" }
+const githubHeaders = () => ({
+  "Authorization": `token ${GITHUB_TOKEN}`,
+  "Accept": "application/vnd.github.v3+json",
+  "User-Agent": "DZ-Legends-Pizza-Server"
 });
 
-function dbReady() {
-  return mongoose.connection.readyState === 1;
+async function githubGet(filePath) {
+  if (!GITHUB_TOKEN) {
+    const fs = require("fs");
+    const localPath = path.join(__dirname, filePath);
+    if (fs.existsSync(localPath)) {
+      return JSON.parse(fs.readFileSync(localPath, "utf8"));
+    }
+    return null;
+  }
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}`;
+  const response = await fetch(url, { headers: githubHeaders() });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`GitHub GET failed: ${response.status} ${response.statusText}`);
+  const payload = await response.json();
+  const content = Buffer.from(payload.content, "base64").toString("utf8");
+  return JSON.parse(content);
+}
+
+async function githubPut(filePath, data, message) {
+  if (!GITHUB_TOKEN) {
+    const fs = require("fs");
+    const localPath = path.join(__dirname, filePath);
+    fs.writeFileSync(localPath, JSON.stringify(data, null, 2), "utf8");
+    return { ok: true, local: true };
+  }
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+  let sha = null;
+  try {
+    const existing = await fetch(`${url}?ref=${GITHUB_BRANCH}`, { headers: githubHeaders() });
+    if (existing.ok) {
+      const payload = await existing.json();
+      sha = payload.sha;
+    }
+  } catch {}
+  const body = {
+    message: message || `Update ${filePath}`,
+    content: Buffer.from(JSON.stringify(data, null, 2)).toString("base64"),
+    branch: GITHUB_BRANCH
+  };
+  if (sha) body.sha = sha;
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: { ...githubHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`GitHub PUT failed: ${response.status} ${errorText}`);
+  }
+  return response.json();
 }
 
 app.get("/api/health", async (_req, res) => {
   try {
-    if (!dbReady()) {
-      return res.json({ ok: true, database: "disconnected", service: "DZ Legends Pizza" });
-    }
-    await State.findOne({ key: "application" }).lean().maxTimeMS(5000);
-    res.json({ ok: true, database: "connected", service: "DZ Legends Pizza" });
+    const hasToken = Boolean(GITHUB_TOKEN);
+    res.json({ ok: true, service: "DZ Legends Pizza", github: hasToken ? "connected" : "local-only", owner: GITHUB_OWNER, repo: GITHUB_REPO });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
   }
@@ -60,11 +103,15 @@ app.get("/api/health", async (_req, res) => {
 
 app.get("/api/state", async (_req, res) => {
   try {
-    if (!dbReady()) {
-      return res.json({ ok: true, state: defaultState() });
+    const state = {};
+    for (const [key, filePath] of Object.entries(DATA_FILES)) {
+      const data = await githubGet(filePath);
+      state[key] = data !== null ? data : (key === "categories" ? [] : key === "settings" ? { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "", theme: "dark" } : []);
     }
-    const doc = await State.findOne({ key: "application" }).lean().maxTimeMS(5000);
-    res.json({ ok: true, state: doc ? doc.data : defaultState() });
+    if (!state.categories || state.categories.length === 0) {
+      state.categories = [{ id: "cat-pizzas", name: "Pizzas", image: "" }, { id: "cat-boissons", name: "Boissons", image: "" }];
+    }
+    res.json({ ok: true, state });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
   }
@@ -75,15 +122,16 @@ app.put("/api/state", async (req, res) => {
     if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
       return res.status(400).json({ ok: false, error: "Invalid state payload" });
     }
-    if (!dbReady()) {
-      return res.json({ ok: true, updatedAt: new Date(), offline: true });
+    const body = req.body;
+    const results = {};
+    for (const [key, filePath] of Object.entries(DATA_FILES)) {
+      if (body[key] !== undefined) {
+        const message = `Update ${key} via DZ Legends Pizza`;
+        const result = await githubPut(filePath, body[key], message);
+        results[key] = result.ok !== false;
+      }
     }
-    const updated = await State.findOneAndUpdate(
-      { key: "application" },
-      { key: "application", data: req.body, updatedAt: new Date() },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    ).maxTimeMS(5000);
-    res.json({ ok: true, updatedAt: updated.updatedAt });
+    res.json({ ok: true, updatedAt: new Date(), results });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
   }
@@ -105,21 +153,8 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ ok: false, error: "Internal server error" });
 });
 
-async function connectDatabase() {
-  if (!MONGODB_URI) {
-    console.warn("MONGODB_URI is not set. Running without persistent database.");
-    return;
-  }
-  try {
-    await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
-    console.log("MongoDB connected successfully.");
-  } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-  }
-}
-
-connectDatabase().finally(() => {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`DZ Legends Pizza server running on port ${PORT}`);
-  });
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`DZ Legends Pizza server running on port ${PORT}`);
+  console.log(`GitHub: ${GITHUB_OWNER}/${GITHUB_REPO} (branch: ${GITHUB_BRANCH})`);
+  console.log(`GitHub token: ${GITHUB_TOKEN ? "configured" : "NOT configured (local-only mode)"}`);
 });

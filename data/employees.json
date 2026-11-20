@@ -1,0 +1,32 @@
+[
+  {
+    "active": true,
+    "permissions": [
+      "dashboard",
+      "pos",
+      "orders",
+      "products",
+      "categories",
+      "stock",
+      "expenses",
+      "reports",
+      "employees",
+      "settings"
+    ],
+    "actions": {
+      "view": true,
+      "add": true,
+      "edit": true,
+      "delete": true,
+      "completeSales": true,
+      "cancelOrders": true,
+      "financial": true
+    },
+    "username": "Youcef",
+    "passwordHash": "LhXcGI1HaY7YLbDO+AOKGpHWfb6S1yL5MAfwtf85jsA=",
+    "passwordSalt": "a062eHood4LOi/CwRgk8DA==",
+    "id": "b879d584-cc4a-4f44-ad97-426fa74602dd",
+    "name": "Youcef",
+    "role": "Administrateur"
+  }
+]
