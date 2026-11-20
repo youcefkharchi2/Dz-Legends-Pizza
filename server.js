@@ -135,21 +135,58 @@ app.get("/api/state", async (_req, res) => {
       return res.json({ ok: true, state: stateCache, cached: true });
     }
     const state = {};
+    let githubFailed = false;
     for (const [key, filePath] of Object.entries(DATA_FILES)) {
-      const data = await githubGet(filePath);
-      state[key] = data !== null ? data : (key === "categories" ? [] : key === "settings" ? { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "", theme: "dark" } : []);
+      try {
+        const data = await githubGet(filePath);
+        state[key] = data !== null ? data : (key === "categories" ? [] : key === "settings" ? { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "", theme: "dark" } : []);
+      } catch (err) {
+        console.error("Failed to get " + filePath + ":", err.message);
+        githubFailed = true;
+        // Try local file fallback
+        const fs = require("fs");
+        const localPath = path.join(__dirname, filePath);
+        if (fs.existsSync(localPath)) {
+          try {
+            state[key] = JSON.parse(fs.readFileSync(localPath, "utf8"));
+            console.log("Using local fallback for " + filePath);
+          } catch (e) {
+            state[key] = key === "categories" ? [] : key === "settings" ? { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "", theme: "dark" } : [];
+          }
+        } else {
+          state[key] = key === "categories" ? [] : key === "settings" ? { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "", theme: "dark" } : [];
+        }
+      }
     }
     if (!state.categories || state.categories.length === 0) {
       state.categories = [{ id: "cat-pizzas", name: "Pizzas", image: "" }, { id: "cat-boissons", name: "Boissons", image: "" }];
     }
     stateCache = state;
     stateCacheTime = now;
-    res.json({ ok: true, state });
+    res.json({ ok: true, state, githubFailed });
   } catch (error) {
     if (stateCache) {
       return res.json({ ok: true, state: stateCache, cached: true, stale: true });
     }
-    res.status(500).json({ ok: false, error: error.message });
+    // Last resort: read all from local files
+    try {
+      const fs = require("fs");
+      const state = {};
+      for (const [key, filePath] of Object.entries(DATA_FILES)) {
+        const localPath = path.join(__dirname, filePath);
+        if (fs.existsSync(localPath)) {
+          state[key] = JSON.parse(fs.readFileSync(localPath, "utf8"));
+        } else {
+          state[key] = key === "categories" ? [] : key === "settings" ? { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "", theme: "dark" } : [];
+        }
+      }
+      if (!state.categories || state.categories.length === 0) {
+        state.categories = [{ id: "cat-pizzas", name: "Pizzas", image: "" }, { id: "cat-boissons", name: "Boissons", image: "" }];
+      }
+      res.json({ ok: true, state, localFallback: true });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: error.message });
+    }
   }
 });
 
