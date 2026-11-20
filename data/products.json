@@ -12,15 +12,15 @@
     "id": "6d756bde-08c3-4002-999a-1c508382b500"
   },
   {
+    "cost": 0,
+    "available": true,
+    "description": "",
+    "minStock": 5,
+    "stock": 49,
     "name": "Pizza scalob",
     "category": "Pizzas",
     "price": 350,
-    "cost": 0,
-    "description": "",
-    "available": true,
     "image": "",
-    "stock": 50,
-    "minStock": 5,
     "id": "d58eaf82-dde3-4bac-b2ea-bbd4ac734a57"
   }
 ]
