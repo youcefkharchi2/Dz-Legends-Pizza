@@ -42,11 +42,17 @@ const defaultState = () => ({
   settings: { name: "DZ Legends Pizza", address: "", phone: "", logo: "", loginGif: "", favicon32: "", favicon64: "" }
 });
 
+function dbReady() {
+  return mongoose.connection.readyState === 1;
+}
+
 app.get("/api/health", async (_req, res) => {
   try {
-    const dbState = mongoose.connection.readyState === 1 ? "connected" : "disconnected";
-    await State.findOne({ key: "application" }).lean();
-    res.json({ ok: true, database: dbState, service: "DZ Legends Pizza" });
+    if (!dbReady()) {
+      return res.json({ ok: true, database: "disconnected", service: "DZ Legends Pizza" });
+    }
+    await State.findOne({ key: "application" }).lean().maxTimeMS(5000);
+    res.json({ ok: true, database: "connected", service: "DZ Legends Pizza" });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
   }
@@ -54,7 +60,10 @@ app.get("/api/health", async (_req, res) => {
 
 app.get("/api/state", async (_req, res) => {
   try {
-    const doc = await State.findOne({ key: "application" }).lean();
+    if (!dbReady()) {
+      return res.json({ ok: true, state: defaultState() });
+    }
+    const doc = await State.findOne({ key: "application" }).lean().maxTimeMS(5000);
     res.json({ ok: true, state: doc ? doc.data : defaultState() });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
@@ -66,11 +75,14 @@ app.put("/api/state", async (req, res) => {
     if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
       return res.status(400).json({ ok: false, error: "Invalid state payload" });
     }
+    if (!dbReady()) {
+      return res.json({ ok: true, updatedAt: new Date(), offline: true });
+    }
     const updated = await State.findOneAndUpdate(
       { key: "application" },
       { key: "application", data: req.body, updatedAt: new Date() },
       { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    ).maxTimeMS(5000);
     res.json({ ok: true, updatedAt: updated.updatedAt });
   } catch (error) {
     res.status(500).json({ ok: false, error: error.message });
