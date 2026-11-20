@@ -68,8 +68,8 @@ async function githubGet(filePath) {
   const url = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO + "/contents/" + filePath + "?ref=" + GITHUB_BRANCH;
   const response = await fetch(url, { headers: githubHeaders() });
   if (response.status === 404) return null;
-  if (!response.ok) throw new Error("GitHub GET failed: " + response.status);
-  const payload = await response.json();
+  if (!response.ok) { const errorBody = await response.text(); console.error("GitHub PUT error:", response.status, errorBody); throw new Error("GitHub PUT failed: " + response.status + " - " + errorBody); }
+  // (was: const errorText = await response.text();)
   const content = Buffer.from(payload.content, "base64").toString("utf8");
   return JSON.parse(content);
 }
