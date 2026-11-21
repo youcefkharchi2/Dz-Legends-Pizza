@@ -19,6 +19,9 @@
     "change": 0
   },
   {
+    "status": "Actif",
+    "stockApplied": true,
+    "payment": "Espèces",
     "id": "c5d9a8a8-344e-4864-8baa-5e5d17169ac2",
     "date": "2026-11-20T20:35:24.603Z",
     "items": [
@@ -31,8 +34,24 @@
       }
     ],
     "total": 350,
+    "received": 350,
+    "change": 0
+  },
+  {
+    "id": "46b78756-af16-4a46-ae47-ccff2cf37907",
+    "date": "2026-11-21T08:30:47.071Z",
+    "items": [
+      {
+        "id": "d58eaf82-dde3-4bac-b2ea-bbd4ac734a57",
+        "name": "Pizza scalob",
+        "price": 350,
+        "cost": 0,
+        "qty": 1
+      }
+    ],
+    "total": 350,
     "status": "Actif",
-    "payment": "Espèces",
+    "payment": "Autre",
     "received": 350,
     "change": 0,
     "stockApplied": true
