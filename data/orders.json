@@ -195,8 +195,6 @@
     "change": 0
   },
   {
-    "status": "Actif",
-    "payment": "Espèces",
     "id": "7f5097e5-6685-4dbc-9b65-f7bc789ae756",
     "date": "2026-11-27T13:50:53.878Z",
     "items": [
@@ -217,13 +215,15 @@
     ],
     "total": 600,
     "deliveryFee": 0,
+    "status": "Actif",
+    "payment": "Espèces",
     "deliveryMethod": "Retrait en magasin",
     "received": 600,
     "change": 0
   },
   {
-    "id": "964e3d15-ed17-47c1-ad40-d393868be303",
-    "date": "2026-11-27T14:47:48.662Z",
+    "id": "ba100980-c20a-414b-b414-bfea80c940e5",
+    "date": "2026-11-27T14:48:58.117Z",
     "items": [
       {
         "id": "6d756bde-08c3-4002-999a-1c508382b500",
@@ -235,9 +235,9 @@
     ],
     "total": 250,
     "deliveryFee": 0,
-    "status": "نشط",
-    "payment": "نقداً",
-    "deliveryMethod": "تسليم في المتجر",
+    "status": "Actif",
+    "payment": "Espèces",
+    "deliveryMethod": "Retrait en magasin",
     "received": 250,
     "change": 0
   }
