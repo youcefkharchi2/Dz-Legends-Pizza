@@ -342,13 +342,20 @@
     const feeNode = paymentForm?.querySelector("[data-checkout-fee]");
     const totalNode = paymentForm?.querySelector("[data-checkout-total]");
     const receivedInput = paymentForm?.querySelector("[name=received]");
+    let receivedTouched = false;
+    const markReceivedTouched = () => { receivedTouched = true; };
+    receivedInput?.addEventListener("input", markReceivedTouched);
+    receivedInput?.addEventListener("change", markReceivedTouched);
     const refreshTotals = () => {
       const fee = deliveryFeeFor(deliverySelect.value);
       const payable = subtotal + fee;
       feeNode.textContent = money(fee);
       totalNode.textContent = money(payable);
       receivedInput.min = String(payable);
-      if (Number(receivedInput.value) < payable) receivedInput.value = String(payable);
+      if (!receivedTouched || Number(receivedInput.value) < payable) {
+        receivedInput.value = String(payable);
+        receivedTouched = false;
+      }
     };
     if (deliverySelect) { deliverySelect.addEventListener("change", refreshTotals); deliverySelect.addEventListener("input", refreshTotals); refreshTotals(); }
   }
