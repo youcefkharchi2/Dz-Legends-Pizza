@@ -396,7 +396,19 @@
       });
       image.src = source;
       await loaded;
-      const size = 320, canvas = document.createElement("canvas");
+      const size = 320;
+      const mono = document.createElement("canvas");
+      mono.width = mono.height = size;
+      const mctx = mono.getContext("2d", { willReadFrequently: true });
+      mctx.drawImage(image, 0, 0, size, size);
+      const pixels = mctx.getImageData(0, 0, size, size), data = pixels.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        const value = lum > 60 ? 0 : 255;
+        data[i] = data[i + 1] = data[i + 2] = value;
+      }
+      mctx.putImageData(pixels, 0, 0);
+      const canvas = document.createElement("canvas");
       canvas.width = canvas.height = size;
       const ctx = canvas.getContext("2d");
       ctx.fillStyle = "#fff";
@@ -405,9 +417,7 @@
       ctx.beginPath();
       ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
       ctx.clip();
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(image, 0, 0, size, size);
+      ctx.drawImage(mono, 0, 0);
       ctx.restore();
       return canvas.toDataURL("image/png");
     } catch {
