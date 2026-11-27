@@ -94,6 +94,8 @@
     "change": 0
   },
   {
+    "status": "نشط",
+    "payment": "نقداً",
     "id": "c75872df-d093-4f98-b343-8db951da332d",
     "date": "2026-11-27T13:32:18.080Z",
     "items": [
@@ -114,10 +116,28 @@
     ],
     "total": 600,
     "deliveryFee": 0,
-    "status": "نشط",
-    "payment": "نقداً",
     "deliveryMethod": "تسليم في المتجر",
     "received": 600,
+    "change": 0
+  },
+  {
+    "id": "335d0690-c2da-468d-8432-16149c918395",
+    "date": "2026-11-27T13:42:11.688Z",
+    "items": [
+      {
+        "id": "6d756bde-08c3-4002-999a-1c508382b500",
+        "name": "pizza viande",
+        "price": 250,
+        "cost": 0,
+        "qty": 2
+      }
+    ],
+    "total": 550,
+    "deliveryFee": 50,
+    "status": "نشط",
+    "payment": "نقداً",
+    "deliveryMethod": "تسليم خارجاً",
+    "received": 550,
     "change": 0
   }
 ]
