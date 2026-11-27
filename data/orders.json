@@ -242,6 +242,8 @@
     "change": 0
   },
   {
+    "status": "Actif",
+    "payment": "Espèces",
     "id": "92517e38-fd67-466e-b1e4-aab2c06a978f",
     "date": "2026-11-27T14:49:31.047Z",
     "items": [
@@ -255,13 +257,13 @@
     ],
     "total": 250,
     "deliveryFee": 0,
-    "status": "Actif",
-    "payment": "Espèces",
     "deliveryMethod": "Retrait en magasin",
     "received": 250,
     "change": 0
   },
   {
+    "status": "Actif",
+    "payment": "Espèces",
     "id": "6b9baad4-d98e-455b-8c3f-b292848e7ad1",
     "date": "2026-11-27T14:50:40.855Z",
     "items": [
@@ -282,10 +284,28 @@
     ],
     "total": 650,
     "deliveryFee": 50,
-    "status": "Actif",
-    "payment": "Espèces",
     "deliveryMethod": "Livraison à l’extérieur",
     "received": 650,
+    "change": 0
+  },
+  {
+    "id": "f976a333-fa37-4de0-8dc9-189f98ed2799",
+    "date": "2026-11-27T19:09:18.290Z",
+    "items": [
+      {
+        "id": "20ae3be7-3dde-4874-833b-dbb16fd569e2",
+        "name": "Youcef RR",
+        "price": 250,
+        "cost": 150,
+        "qty": 1
+      }
+    ],
+    "total": 250,
+    "deliveryFee": 0,
+    "status": "Active",
+    "payment": "Cash",
+    "deliveryMethod": "Pickup at Store",
+    "received": 250,
     "change": 0
   }
 ]
