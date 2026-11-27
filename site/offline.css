@@ -56,7 +56,6 @@ h1,h2,h3,.brand-name,.top h1,.card strong,.payment-total{font-weight:700}
   .nav button[data-page="orders"]::before{content:"▤"}
   .nav button[data-page="products"]::before{content:"🍕"}
   .nav button[data-page="categories"]::before{content:"◫"}
-  .nav button[data-page="stock"]::before{content:"▣"}
   .nav button[data-page="expenses"]::before{content:"◈"}
   .nav button[data-page="reports"]::before{content:"▧"}
   .nav button[data-page="employees"]::before{content:"♙"}

@@ -44,8 +44,6 @@ const DATA_FILES = {
   categories: "data/categories.json",
   orders: "data/orders.json",
   expenses: "data/expenses.json",
-  stock: "data/stock.json",
-  stockMovements: "data/stock-movements.json",
   employees: "data/employees.json",
   settings: "data/settings.json"
 };
