@@ -260,5 +260,32 @@
     "deliveryMethod": "Retrait en magasin",
     "received": 250,
     "change": 0
+  },
+  {
+    "id": "6b9baad4-d98e-455b-8c3f-b292848e7ad1",
+    "date": "2026-11-27T14:50:40.855Z",
+    "items": [
+      {
+        "id": "6d756bde-08c3-4002-999a-1c508382b500",
+        "name": "pizza viande",
+        "price": 250,
+        "cost": 0,
+        "qty": 1
+      },
+      {
+        "id": "d58eaf82-dde3-4bac-b2ea-bbd4ac734a57",
+        "name": "Pizza scalob",
+        "price": 350,
+        "cost": 0,
+        "qty": 1
+      }
+    ],
+    "total": 650,
+    "deliveryFee": 50,
+    "status": "Actif",
+    "payment": "Espèces",
+    "deliveryMethod": "Livraison à l’extérieur",
+    "received": 650,
+    "change": 0
   }
 ]
